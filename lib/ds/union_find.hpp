@@ -1,33 +1,54 @@
-#pragma once
-#include <vector>
-#include <utility>
+// ===== Union-Find =====
+// 【何ができる】「a と b を同じグループにする」「a と b は同じグループ？」をほぼ O(1) で。
+// 【使い方】
+//   UnionFind uf(n);         // 0 〜 n-1 の n 人。最初は全員バラバラ
+//   uf.merge(a, b);          // a と b のグループをくっつける
+//   uf.same(a, b)            // 同じグループなら true
+//   uf.size(a)               // a がいるグループの人数
+//   uf.count()               // グループの数
+//   uf.groups()              // グループごとの頂点リスト
 
-// Union-Find（union by size + 経路圧縮）
 struct UnionFind {
-    std::vector<int> p;  // 根なら -(サイズ)、それ以外は親
-    int comps;
+    vector<int> parent, sz;
+    int num;
 
-    explicit UnionFind(int n = 0) : p(n, -1), comps(n) {}
-    int leader(int x) { return p[x] < 0 ? x : p[x] = leader(p[x]); }
-    bool same(int a, int b) { return leader(a) == leader(b); }
-    int size(int x) { return -p[leader(x)]; }
-    int count() const { return comps; }
-    // 併合できたら true
+    UnionFind(int n) {
+        parent.resize(n);
+        sz.assign(n, 1);
+        num = n;
+        for(int i = 0; i < n; i++) parent[i] = i;
+    }
+
+    int root(int x) {
+        if(parent[x] == x) return x;
+        return parent[x] = root(parent[x]);
+    }
+
+    // くっつけたら true、もともと同じグループなら false
     bool merge(int a, int b) {
-        a = leader(a), b = leader(b);
-        if (a == b) return false;
-        if (p[a] > p[b]) std::swap(a, b);
-        p[a] += p[b];
-        p[b] = a;
-        comps--;
+        a = root(a);
+        b = root(b);
+        if(a == b) return false;
+        if(sz[a] < sz[b]) swap(a, b);
+        parent[b] = a;
+        sz[a] += sz[b];
+        num--;
         return true;
     }
-    std::vector<std::vector<int>> groups() {
-        int n = (int)p.size();
-        std::vector<std::vector<int>> g(n);
-        for (int i = 0; i < n; i++) g[leader(i)].push_back(i);
-        std::vector<std::vector<int>> res;
-        for (auto& v : g) if (!v.empty()) res.push_back(std::move(v));
+
+    bool same(int a, int b) { return root(a) == root(b); }
+    int size(int a) { return sz[root(a)]; }
+    int count() { return num; }
+
+    vector<vector<int>> groups() {
+        int n = parent.size();
+        vector<vector<int>> g(n);
+        for(int i = 0; i < n; i++) g[root(i)].push_back(i);
+        vector<vector<int>> res;
+        for(int i = 0; i < n; i++)
+        {
+            if(!g[i].empty()) res.push_back(g[i]);
+        }
         return res;
     }
 };

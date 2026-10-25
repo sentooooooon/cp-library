@@ -1,57 +1,58 @@
-#pragma once
-#include <vector>
-#include "modint.hpp"
+// ===== 畳み込み（NTT） =====
+// 【必要】先に mint.hpp を貼っておく。MOD は 998244353 のままにすること。
+// 【何ができる】c[k] = Σ a[i] × b[k - i] を O(N log N) で求める。
+//              「多項式の掛け算」と同じ。
+// 【使い方】
+//   vector<mint> a = {1, 2, 3}, b = {4, 5};
+//   vector<mint> c = convolution(a, b);   // {4, 13, 22, 15}
 
-// NTT による畳み込み（mod 998244353、原始根 3）
-namespace ntt_internal {
-template <class mint>
-void ntt(std::vector<mint>& a, bool invert) {
-    int n = (int)a.size();
-    for (int i = 1, j = 0; i < n; i++) {
+void ntt(vector<mint>& a, bool inverse) {
+    int n = a.size();
+    for(int i = 1, j = 0; i < n; i++)
+    {
         int bit = n >> 1;
-        for (; j & bit; bit >>= 1) j ^= bit;
+        while(j & bit)
+        {
+            j ^= bit;
+            bit >>= 1;
+        }
         j ^= bit;
-        if (i < j) std::swap(a[i], a[j]);
+        if(i < j) swap(a[i], a[j]);
     }
-    for (int len = 2; len <= n; len <<= 1) {
-        mint w = mint(3).pow((mint::mod() - 1) / len);
-        if (invert) w = w.inv();
-        int half = len / 2;
-        std::vector<mint> ws(half);
-        ws[0] = 1;
-        for (int k = 1; k < half; k++) ws[k] = ws[k - 1] * w;
-        for (int i = 0; i < n; i += len) {
-            for (int k = 0; k < half; k++) {
-                mint u = a[i + k], v = a[i + k + half] * ws[k];
+    for(int len = 2; len <= n; len <<= 1)
+    {
+        mint w = mint(3).pow((MOD - 1) / len);  // 3 は 998244353 の原始根
+        if(inverse) w = w.inv();
+        for(int i = 0; i < n; i += len)
+        {
+            mint wk = 1;
+            for(int k = 0; k < len / 2; k++)
+            {
+                mint u = a[i + k], v = a[i + k + len / 2] * wk;
                 a[i + k] = u + v;
-                a[i + k + half] = u - v;
+                a[i + k + len / 2] = u - v;
+                wk *= w;
             }
         }
     }
-    if (invert) {
-        mint ninv = mint(n).inv();
-        for (auto& x : a) x *= ninv;
+    if(inverse)
+    {
+        mint n_inv = mint(n).inv();
+        for(auto& x : a) x *= n_inv;
     }
 }
-}  // namespace ntt_internal
 
-inline std::vector<mint998> convolution(std::vector<mint998> a, std::vector<mint998> b) {
-    if (a.empty() || b.empty()) return {};
-    int need = (int)(a.size() + b.size() - 1);
-    if (std::min(a.size(), b.size()) <= 40) {
-        std::vector<mint998> c(need);
-        for (size_t i = 0; i < a.size(); i++)
-            for (size_t j = 0; j < b.size(); j++) c[i + j] += a[i] * b[j];
-        return c;
-    }
+vector<mint> convolution(vector<mint> a, vector<mint> b) {
+    if(a.empty() || b.empty()) return {};
+    int need = a.size() + b.size() - 1;
     int n = 1;
-    while (n < need) n <<= 1;
+    while(n < need) n <<= 1;
     a.resize(n);
     b.resize(n);
-    ntt_internal::ntt(a, false);
-    ntt_internal::ntt(b, false);
-    for (int i = 0; i < n; i++) a[i] *= b[i];
-    ntt_internal::ntt(a, true);
+    ntt(a, false);
+    ntt(b, false);
+    for(int i = 0; i < n; i++) a[i] *= b[i];
+    ntt(a, true);
     a.resize(need);
     return a;
 }

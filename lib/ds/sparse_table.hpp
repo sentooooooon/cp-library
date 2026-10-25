@@ -1,25 +1,33 @@
-#pragma once
-#include <vector>
+// ===== Sparse Table =====
+// 【何ができる】配列が変わらないとき、a[l] 〜 a[r-1] の最小値を O(1) で。（前計算 O(N log N)）
+// 【使い方】
+//   SparseTable st(a);       // vector<long long> a
+//   st.query(l, r)           // a[l] 〜 a[r-1] の最小値（l < r）
+// 【書き換えるところ】★ を max にすれば最大値、gcd にすれば gcd。（足し算はダメ）
 
-// Sparse Table。冪等な演算（min, max, gcd 等）の区間クエリを O(1)
-template <class T, auto op>
 struct SparseTable {
-    std::vector<std::vector<T>> t;
-    std::vector<int> lg;
+    // ★
+    long long op(long long a, long long b) { return min(a, b); }
 
-    SparseTable() = default;
-    explicit SparseTable(const std::vector<T>& v) {
-        int n = (int)v.size();
+    vector<vector<long long>> table;
+    vector<int> lg;
+
+    SparseTable(const vector<long long>& a) {
+        int n = a.size();
         lg.assign(n + 1, 0);
-        for (int i = 2; i <= n; i++) lg[i] = lg[i / 2] + 1;
-        t.assign(lg[n] + 1, v);
-        for (int k = 1; k <= lg[n]; k++)
-            for (int i = 0; i + (1 << k) <= n; i++)
-                t[k][i] = op(t[k - 1][i], t[k - 1][i + (1 << (k - 1))]);
+        for(int i = 2; i <= n; i++) lg[i] = lg[i / 2] + 1;
+        table.assign(lg[n] + 1, a);
+        for(int k = 1; k <= lg[n]; k++)
+        {
+            for(int i = 0; i + (1 << k) <= n; i++)
+            {
+                table[k][i] = op(table[k - 1][i], table[k - 1][i + (1 << (k - 1))]);
+            }
+        }
     }
-    // [l, r)、l < r
-    T query(int l, int r) const {
+
+    long long query(int l, int r) {
         int k = lg[r - l];
-        return op(t[k][l], t[k][r - (1 << k)]);
+        return op(table[k][l], table[k][r - (1 << k)]);
     }
 };
