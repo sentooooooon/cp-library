@@ -63,3 +63,4 @@ LazySegmentTree<S, op, e, ll, mapping, composition, id> seg(vector<S>(n, {0, 1})
 ```bash
 make test   # 全ライブラリを愚直解とランダム比較（ASan/UBSan 有効）
 ```
+# cp-library
