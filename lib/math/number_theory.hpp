@@ -3,6 +3,7 @@
 //   pow_mod(2, 10, 1000)      // 2^10 % 1000 = 24。O(log)
 //   floor_div(-7, 2)          // -4（負の数でも正しく切り捨て）
 //   ceil_div(7, 2)            // 4（切り上げ）
+//   isqrt(10)                 // 3（√10 の切り捨て。sqrt() と違って誤差でずれない）
 //   inv_mod(3, 7)             // 5（3 × 5 ≡ 1 mod 7）。逆元がなければ -1
 //   ext_gcd(a, b, x, y)       // ax + by = gcd(a, b) となる x, y を求め、gcd を返す
 //   crt(r1, m1, r2, m2)       // x ≡ r1 (mod m1) かつ x ≡ r2 (mod m2) となる x を返す
@@ -31,6 +32,14 @@ long long ceil_div(long long a, long long b) {
     long long q = a / b;
     if(a % b != 0 && ((a < 0) == (b < 0))) q++;
     return q;
+}
+
+// n は 0 以上
+long long isqrt(long long n) {
+    long long r = sqrtl((long double)n);
+    while(r > 0 && (__int128)r * r > n) r--;
+    while((__int128)(r + 1) * (r + 1) <= n) r++;
+    return r;
 }
 
 long long ext_gcd(long long a, long long b, long long& x, long long& y) {

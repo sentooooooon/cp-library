@@ -17,6 +17,22 @@ using namespace std;
 #include "graph/topological_sort.hpp"
 #include "string/z_algorithm.hpp"
 #include "string/rolling_hash.hpp"
+#include "basic/compress.hpp"
+#include "basic/run_length.hpp"
+#include "basic/prefix_sum.hpp"
+#include "basic/imos.hpp"
+#include "basic/binary_search.hpp"
+#include "basic/lis.hpp"
+#include "basic/inversion.hpp"
+#include "basic/doubling.hpp"
+#include "math/base_conv.hpp"
+#include "ds/weighted_union_find.hpp"
+#include "graph/bfs.hpp"
+#include "graph/grid_bfs.hpp"
+#include "graph/warshall_floyd.hpp"
+#include "graph/kruskal.hpp"
+#include "graph/tree_diameter.hpp"
+#include "graph/bipartite.hpp"
 using ll = long long;
 
 mt19937_64 rng(12345);
@@ -305,6 +321,327 @@ void test_string() {
     }
 }
 
+void test_lazy_segtree_assign() {
+    for (int t = 0; t < 200; t++) {
+        int n = rnd(1, 40);
+        vector<ll> a(n);
+        for (auto& x : a) x = rnd(-100, 100);
+        LazySegTree seg(a);
+        for (int q = 0; q < 200; q++) {
+            int l = rnd(0, n), r = rnd(0, n);
+            if (l > r) swap(l, r);
+            ll x = rnd(-50, 50);
+            int op = rnd(0, 2);
+            if (op == 0) { seg.add(l, r, x); for (int i = l; i < r; i++) a[i] += x; }
+            if (op == 1) { seg.assign(l, r, x); for (int i = l; i < r; i++) a[i] = x; }
+            l = rnd(0, n - 1), r = rnd(l + 1, n);
+            CHECK(seg.get_sum(l, r) == accumulate(a.begin() + l, a.begin() + r, 0LL));
+            CHECK(seg.get_min(l, r) == *min_element(a.begin() + l, a.begin() + r));
+            CHECK(seg.get_max(l, r) == *max_element(a.begin() + l, a.begin() + r));
+            int i = rnd(0, n - 1);
+            CHECK(seg.get(i) == a[i]);
+        }
+    }
+}
+
+void test_isqrt() {
+    for (ll n = 0; n <= 100000; n++) {
+        ll r = isqrt(n);
+        CHECK(r * r <= n && (r + 1) * (r + 1) > n);
+    }
+    for (int t = 0; t < 100000; t++) {
+        ll n = rnd(0, LLONG_MAX);
+        if (t % 3 == 0) { ll k = rnd(1, 3037000499LL); n = k * k - rnd(0, 1); }
+        ll r = isqrt(n);
+        CHECK((__int128)r * r <= n && (__int128)(r + 1) * (r + 1) > n);
+    }
+    CHECK(isqrt(LLONG_MAX) == 3037000499LL);
+}
+
+void test_compress() {
+    for (int t = 0; t < 200; t++) {
+        int n = rnd(0, 30);
+        vector<ll> a(n);
+        for (auto& x : a) x = rnd(-1e9, 1e9) / rnd(1, 1e8);
+        Compress cp(a);
+        auto b = cp.ids(a);
+        set<ll> st(a.begin(), a.end());
+        CHECK(cp.size() == (int)st.size());
+        for (int i = 0; i < n; i++) {
+            CHECK(cp.val(b[i]) == a[i]);
+            CHECK(b[i] == (int)count_if(st.begin(), st.end(), [&](ll v) { return v < a[i]; }));
+        }
+    }
+}
+
+void test_run_length() {
+    CHECK(run_length("aaabbc") == (vector<pair<char, int>>{{'a', 3}, {'b', 2}, {'c', 1}}));
+    CHECK(run_length("").empty());
+    for (int t = 0; t < 200; t++) {
+        int n = rnd(0, 30);
+        vector<ll> a(n);
+        for (auto& x : a) x = rnd(0, 2);
+        auto rl = run_length(a);
+        vector<ll> back;
+        for (int i = 0; i < (int)rl.size(); i++) {
+            CHECK(rl[i].second >= 1);
+            if (i > 0) CHECK(rl[i].first != rl[i - 1].first);
+            for (int k = 0; k < rl[i].second; k++) back.push_back(rl[i].first);
+        }
+        CHECK(back == a);
+    }
+}
+
+void test_prefix_sum_imos() {
+    for (int t = 0; t < 100; t++) {
+        int n = rnd(0, 30);
+        vector<ll> a(n);
+        for (auto& x : a) x = rnd(-1e9, 1e9);
+        PrefixSum ps(a);
+        for (int l = 0; l <= n; l++)
+            for (int r = l; r <= n; r++) CHECK(ps.sum(l, r) == accumulate(a.begin() + l, a.begin() + r, 0LL));
+        Imos im(n);
+        vector<ll> b(n, 0);
+        for (int q = 0; q < 50 && n > 0; q++) {
+            int l = rnd(0, n), r = rnd(0, n);
+            if (l > r) swap(l, r);
+            ll x = rnd(-100, 100);
+            im.add(l, r, x);
+            for (int i = l; i < r; i++) b[i] += x;
+        }
+        CHECK(im.build() == b);
+    }
+    for (int t = 0; t < 100; t++) {
+        int h = rnd(1, 12), w = rnd(1, 12);
+        vector<vector<ll>> g(h, vector<ll>(w));
+        for (auto& row : g) for (auto& x : row) x = rnd(-100, 100);
+        PrefixSum2D ps(g);
+        for (int q = 0; q < 100; q++) {
+            int i1 = rnd(0, h), i2 = rnd(0, h), j1 = rnd(0, w), j2 = rnd(0, w);
+            if (i1 > i2) swap(i1, i2);
+            if (j1 > j2) swap(j1, j2);
+            ll s = 0;
+            for (int i = i1; i < i2; i++) for (int j = j1; j < j2; j++) s += g[i][j];
+            CHECK(ps.sum(i1, j1, i2, j2) == s);
+        }
+    }
+    PrefixSum2D empty2d(vector<vector<ll>>{});
+    CHECK(empty2d.sum(0, 0, 0, 0) == 0);
+}
+
+void test_bin_search() {
+    CHECK(bin_search(1000, 0, [&](ll x) { return x * x >= 1000; }) == 32);
+    CHECK(bin_search(0, 1000, [&](ll x) { return x * x <= 1000; }) == 31);
+    for (int t = 0; t < 2000; t++) {
+        ll lo = rnd(-1e18, 1e18), hi = rnd(-1e18, 1e18);
+        if (lo > hi) swap(lo, hi);
+        if (hi - lo < 2) continue;
+        ll b = rnd(lo + 1, hi);  // x >= b なら OK
+        CHECK(bin_search(hi, lo, [&](ll x) { return x >= b; }) == b);
+        CHECK(bin_search(lo, hi, [&](ll x) { return x < b; }) == b - 1);
+    }
+}
+
+void test_lis() {
+    for (int t = 0; t < 300; t++) {
+        int n = rnd(0, 12);
+        vector<ll> a(n);
+        for (auto& x : a) x = rnd(0, 5);
+        int best_s = 0, best_w = 0;
+        for (int mask = 0; mask < (1 << n); mask++) {
+            vector<ll> s;
+            for (int i = 0; i < n; i++) if (mask >> i & 1) s.push_back(a[i]);
+            bool inc = true, ndec = true;
+            for (int i = 1; i < (int)s.size(); i++) {
+                if (!(s[i - 1] < s[i])) inc = false;
+                if (!(s[i - 1] <= s[i])) ndec = false;
+            }
+            if (inc) best_s = max(best_s, (int)s.size());
+            if (ndec) best_w = max(best_w, (int)s.size());
+        }
+        CHECK(lis(a) == best_s);
+        CHECK(lis(a, false) == best_w);
+    }
+}
+
+void test_inversion() {
+    for (int t = 0; t < 300; t++) {
+        int n = rnd(0, 60);
+        vector<ll> a(n);
+        for (auto& x : a) x = rnd(-5, 5);
+        auto orig = a;
+        ll bf = 0;
+        for (int i = 0; i < n; i++) for (int j = i + 1; j < n; j++) if (a[i] > a[j]) bf++;
+        CHECK(inversion_count(a) == bf);
+        CHECK(a == orig);
+    }
+}
+
+void test_doubling() {
+    for (int t = 0; t < 100; t++) {
+        int n = rnd(1, 30);
+        vector<int> nxt(n);
+        for (auto& x : nxt) x = rnd(0, n - 1);
+        Doubling db(nxt);
+        for (int q = 0; q < 50; q++) {
+            int x = rnd(0, n - 1);
+            ll k = rnd(0, 200);
+            int y = x;
+            for (ll i = 0; i < k; i++) y = nxt[y];
+            CHECK(db.jump(x, k) == y);
+        }
+        // 大きい k: 周期を使って答え合わせ
+        int x = rnd(0, n - 1);
+        ll k = rnd(1e17, 1e18);
+        vector<int> seen(n, -1), path;
+        int y = x;
+        while (seen[y] == -1) { seen[y] = path.size(); path.push_back(y); y = nxt[y]; }
+        ll mu = seen[y], lam = (ll)path.size() - mu;
+        int expect = path[mu + (k - mu) % lam];
+        CHECK(db.jump(x, k) == expect);
+    }
+}
+
+void test_base_conv() {
+    CHECK(to_base(10, 2) == "1010");
+    CHECK(to_base(0, 7) == "0");
+    CHECK(to_base(255, 16) == "FF");
+    CHECK(from_base("ff", 16) == 255);
+    CHECK(from_base("1010", 2) == 10);
+    for (int t = 0; t < 5000; t++) {
+        ll n = rnd(0, LLONG_MAX);
+        int b = rnd(2, 36);
+        string s = to_base(n, b);
+        CHECK(from_base(s, b) == n);
+        if (b == 10) CHECK(s == to_string(n));
+    }
+}
+
+void test_weighted_union_find() {
+    for (int t = 0; t < 300; t++) {
+        int n = rnd(1, 20);
+        // 正解の値を決めておき、正しい情報と（すでにつながっている2点には）嘘の情報を混ぜる
+        vector<ll> val(n);
+        for (auto& x : val) x = rnd(-100, 100);
+        WeightedUnionFind uf(n);
+        UnionFind ref(n);
+        for (int q = 0; q < 60; q++) {
+            int a = rnd(0, n - 1), b = rnd(0, n - 1);
+            bool lie = ref.same(a, b) && rnd(0, 2) == 0;
+            ll w = val[b] - val[a] + (lie ? (rnd(0, 1) ? 1 : -1) * rnd(1, 5) : 0);
+            CHECK(uf.merge(a, b, w) == !lie);
+            if (!lie) ref.merge(a, b);
+            int x = rnd(0, n - 1), y = rnd(0, n - 1);
+            CHECK(uf.same(x, y) == ref.same(x, y));
+            if (uf.same(x, y)) CHECK(uf.diff(x, y) == val[y] - val[x]);
+            CHECK(uf.size(x) == ref.size(x));
+            CHECK(uf.count() == ref.count());
+        }
+    }
+}
+
+void test_bfs_family() {
+    for (int t = 0; t < 200; t++) {
+        int n = rnd(1, 25), m = rnd(0, 60);
+        vector<vector<int>> g(n);
+        vector<vector<pair<int, ll>>> wg(n), ug(n);
+        for (int i = 0; i < m; i++) {
+            int u = rnd(0, n - 1), v = rnd(0, n - 1);
+            g[u].push_back(v);
+            wg[u].push_back({v, 1});
+            ll c = rnd(0, 100);
+            ug[u].push_back({v, c});
+        }
+        auto D = warshall_floyd(ug);
+        for (int s = 0; s < n; s++) {
+            auto dw = dijkstra(wg, s);
+            CHECK(bfs(g, s) == vector<int>(dw.begin(), dw.end()));
+            CHECK(D[s] == dijkstra(ug, s));
+        }
+    }
+}
+
+void test_grid_bfs() {
+    for (int t = 0; t < 200; t++) {
+        int h = rnd(1, 10), w = rnd(1, 10);
+        vector<string> s(h, string(w, '.'));
+        for (auto& row : s) for (auto& c : row) if (rnd(0, 3) == 0) c = '#';
+        int si = rnd(0, h - 1), sj = rnd(0, w - 1);
+        s[si][sj] = '.';
+        // 普通のグラフにして bfs と比べる
+        vector<vector<int>> g(h * w);
+        for (int i = 0; i < h; i++) for (int j = 0; j < w; j++) {
+            if (s[i][j] == '#') continue;
+            if (i + 1 < h && s[i + 1][j] != '#') g[i * w + j].push_back((i + 1) * w + j), g[(i + 1) * w + j].push_back(i * w + j);
+            if (j + 1 < w && s[i][j + 1] != '#') g[i * w + j].push_back(i * w + j + 1), g[i * w + j + 1].push_back(i * w + j);
+        }
+        auto d1 = grid_bfs(s, si, sj);
+        auto d2 = bfs(g, si * w + sj);
+        for (int i = 0; i < h; i++) for (int j = 0; j < w; j++) CHECK(d1[i][j] == d2[i * w + j]);
+    }
+}
+
+void test_kruskal() {
+    for (int t = 0; t < 300; t++) {
+        int n = rnd(1, 7), m = rnd(0, 10);
+        vector<tuple<int, int, ll>> edges;
+        for (int i = 0; i < m; i++) edges.push_back({(int)rnd(0, n - 1), (int)rnd(0, n - 1), rnd(-10, 10)});
+        // 全部の辺の選び方を試す
+        ll best = LLONG_MAX;
+        for (int mask = 0; mask < (1 << m); mask++) {
+            UnionFind uf(n);
+            ll c = 0;
+            for (int i = 0; i < m; i++) if (mask >> i & 1) { uf.merge(get<0>(edges[i]), get<1>(edges[i])); c += get<2>(edges[i]); }
+            if (uf.count() == 1 && __builtin_popcount(mask) == n - 1) best = min(best, c);
+        }
+        ll got = kruskal(n, edges);
+        if (best == LLONG_MAX) CHECK(got == -1);
+        else CHECK(got == best);
+    }
+}
+
+void test_tree_diameter() {
+    for (int t = 0; t < 200; t++) {
+        int n = rnd(1, 40);
+        vector<vector<int>> g(n);
+        for (int i = 1; i < n; i++) {
+            int p = rnd(0, i - 1);
+            g[i].push_back(p), g[p].push_back(i);
+        }
+        int best = 0;
+        for (int s = 0; s < n; s++) { auto d = bfs(g, s); best = max(best, *max_element(d.begin(), d.end())); }
+        auto [d, a, b] = tree_diameter(g);
+        CHECK(d == best);
+        CHECK(bfs(g, a)[b] == d);
+    }
+}
+
+void test_bipartite() {
+    for (int t = 0; t < 300; t++) {
+        int n = rnd(1, 12), m = rnd(0, 15);
+        vector<vector<int>> g(n);
+        vector<pair<int, int>> es;
+        for (int i = 0; i < m; i++) {
+            int u = rnd(0, n - 1), v = rnd(0, n - 1);
+            g[u].push_back(v), g[v].push_back(u);
+            es.push_back({u, v});
+        }
+        bool exist = false;
+        for (int mask = 0; mask < (1 << n) && !exist; mask++) {
+            bool ok = true;
+            for (auto [u, v] : es) if ((mask >> u & 1) == (mask >> v & 1)) ok = false;
+            exist = ok;
+        }
+        auto col = bipartite(g);
+        if (!exist) CHECK(col.empty());
+        else {
+            CHECK((int)col.size() == n);
+            for (auto [u, v] : es) CHECK(col[u] != col[v]);
+            for (int v = 0; v < n; v++) CHECK(col[v] == 0 || col[v] == 1);
+        }
+    }
+}
+
 int main() {
     test_mint();
     test_comb();
@@ -320,5 +657,21 @@ int main() {
     test_lca();
     test_scc_topo();
     test_string();
+    test_lazy_segtree_assign();
+    test_isqrt();
+    test_compress();
+    test_run_length();
+    test_prefix_sum_imos();
+    test_bin_search();
+    test_lis();
+    test_inversion();
+    test_doubling();
+    test_base_conv();
+    test_weighted_union_find();
+    test_bfs_family();
+    test_grid_bfs();
+    test_kruskal();
+    test_tree_diameter();
+    test_bipartite();
     puts("All tests passed.");
 }
