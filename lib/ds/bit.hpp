@@ -6,6 +6,7 @@
 //   bit.add(i, x);           // a[i] += x
 //   bit.sum(l, r)            // a[l] + a[l+1] + ... + a[r-1]（r は含まない）
 //   bit.sum(r)               // a[0] + ... + a[r-1]
+// 【例】examples/ds/bit.cpp に、そのまま動くプログラムがある。
 
 struct BIT {
     int n;

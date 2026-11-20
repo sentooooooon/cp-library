@@ -5,6 +5,7 @@ CXXFLAGS ?= -std=c++20 -O2 -Wall -Wextra -fsanitize=address,undefined -Ilib
 test: tests/test_all
 	./tests/test_all
 	./tests/standalone.sh
+	python3 tests/examples.py
 
 tests/test_all: tests/test_all.cpp $(wildcard lib/*/*.hpp)
 	$(CXX) $(CXXFLAGS) -o $@ $<

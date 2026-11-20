@@ -4,6 +4,7 @@
 //   vector<vector<int>> g(n);    // g[u] = u から出る辺の行き先
 //   vector<int> order = topological_sort(g);
 //   if(order.empty()) → 閉路がある（並べられない）
+// 【例】examples/graph/topological_sort.cpp に、そのまま動くプログラムがある。
 
 vector<int> topological_sort(const vector<vector<int>>& g) {
     int n = g.size();

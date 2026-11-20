@@ -7,6 +7,7 @@
 //   uf.size(a)               // a がいるグループの人数
 //   uf.count()               // グループの数
 //   uf.groups()              // グループごとの頂点リスト
+// 【例】examples/ds/union_find.cpp に、そのまま動くプログラムがある。
 
 struct UnionFind {
     vector<int> parent, sz;

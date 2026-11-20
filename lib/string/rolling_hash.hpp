@@ -5,6 +5,7 @@
 //   rh.get(l, r)                          // s[l] 〜 s[r-1] のハッシュ値（r は含まない）
 //   if(rh.get(0, 3) == rh.get(5, 8))      // s の [0,3) と [5,8) が同じ文字列か
 //   ※ 別の文字列 t と比べるときは RollingHash rt(t); を作って rh.get(..) == rt.get(..)
+// 【例】examples/string/rolling_hash.cpp に、そのまま動くプログラムがある。
 
 struct RollingHash {
     static const unsigned long long M = (1ULL << 61) - 1;

@@ -3,6 +3,7 @@
 //              =「隣どうしを入れ替えて小さい順に並べる」ときの最小回数（バブルソートの交換回数）
 // 【使い方】
 //   long long cnt = inversion_count(a);     // vector<long long> a（a は書き換わらない）
+// 【例】examples/basic/inversion.cpp に、そのまま動くプログラムがある。
 
 // 中身（読まなくてOK）: a[l] 〜 a[r-1] をマージソートしながら転倒数を数える
 long long inversion_count_rec(vector<long long>& a, vector<long long>& tmp, int l, int r) {

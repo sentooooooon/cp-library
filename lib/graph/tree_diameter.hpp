@@ -3,6 +3,7 @@
 // 【使い方】
 //   vector<vector<int>> g(n);                // 木（無向なので両方向に辺を入れる）
 //   auto [d, a, b] = tree_diameter(g);       // 直径 d、両端の頂点 a と b
+// 【例】examples/graph/tree_diameter.cpp に、そのまま動くプログラムがある。
 
 tuple<int, int, int> tree_diameter(const vector<vector<int>>& g) {
     int n = g.size();

@@ -1,0 +1,396 @@
+<title>cp-library 早見表</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+/* レイアウト: 上に「使い方」、下は左に一覧（検索つき）・右に選んだものの詳細の 2 カラム。スマホでは縦に並ぶ */
+:root {
+  --bg: #eef1f4;
+  --surface: #ffffff;
+  --ink: #17202a;
+  --muted: #5b6876;
+  --line: #d6dde4;
+  --accent: #19705e;
+  --accent-ink: #ffffff;
+  --accent-soft: #dcefe9;
+  --code-bg: #f4f6f8;
+  --code-ink: #1d2733;
+  --code-comment: #6d7b89;
+  --mark: #fff1c2;
+  --mark-ink: #5a4500;
+  --font-ui: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", "Noto Sans JP", system-ui, sans-serif;
+  --font-code: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, "Noto Sans Mono CJK JP", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1418; --surface: #161d23; --ink: #e4eaef; --muted: #93a2b0; --line: #27323c;
+    --accent: #4dc4a6; --accent-ink: #062019; --accent-soft: #173a32;
+    --code-bg: #0b1014; --code-ink: #d9e2ea; --code-comment: #7f8f9e; --mark: #3d3416; --mark-ink: #f3dc8a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1418; --surface: #161d23; --ink: #e4eaef; --muted: #93a2b0; --line: #27323c;
+  --accent: #4dc4a6; --accent-ink: #062019; --accent-soft: #173a32;
+  --code-bg: #0b1014; --code-ink: #d9e2ea; --code-comment: #7f8f9e; --mark: #3d3416; --mark-ink: #f3dc8a;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-ui); font-size: 15px; line-height: 1.7;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 48px;
+}
+.wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 20px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; line-height: 1.35; }
+code, pre, .mono { font-family: var(--font-code); }
+button { font: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+header.top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; }
+header.top h1 { font-size: 1.6rem; font-weight: 700; }
+header.top p { margin: 0; color: var(--muted); }
+
+/* 使い方 */
+.howto { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 20px; }
+.howto h2 { font-size: 1.05rem; margin-bottom: 8px; }
+.steps { margin: 0; padding-left: 1.4em; display: grid; gap: 6px; }
+.steps b { color: var(--accent); }
+.rules { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.rule { font-size: .82rem; background: var(--code-bg); border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; }
+.skeleton { margin: 0; background: var(--code-bg); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; font-size: .82rem; line-height: 1.6; overflow-x: auto; color: var(--code-ink); }
+.skeleton .paste { display: block; background: var(--mark); color: var(--mark-ink); margin: 4px -14px; padding: 4px 14px; font-weight: 600; }
+.skeleton-box { display: grid; gap: 8px; align-content: start; min-width: 0; }
+
+/* 2 カラム */
+.browser { display: grid; grid-template-columns: 330px minmax(0, 1fr); gap: 20px; align-items: start; }
+.side { display: grid; gap: 12px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); max-height: calc(100vh - 24px); overflow: auto; padding-right: 4px; }
+.search { width: 100%; font: inherit; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 2px 10px; font-size: .82rem; }
+.chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.cat h3 { font-size: .78rem; letter-spacing: .08em; color: var(--muted); margin: 6px 0 4px; }
+.cat ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.item { width: 100%; text-align: left; background: none; border: 0; border-radius: 6px; padding: 6px 10px; color: var(--ink); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 8px; }
+.item:hover { background: var(--code-bg); }
+.item[aria-current="true"] { background: var(--accent-soft); }
+.item .t { font-weight: 700; }
+.item .w { grid-column: 1 / -1; font-size: .8rem; color: var(--muted); line-height: 1.5; }
+.lv { font-size: .72rem; font-family: var(--font-code); color: var(--muted); white-space: nowrap; align-self: center; }
+.empty { color: var(--muted); font-size: .9rem; }
+
+/* 詳細 */
+.detail { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px; display: grid; gap: 18px; min-width: 0; }
+.d-head { display: grid; gap: 4px; }
+.d-head h2 { font-size: 1.45rem; }
+.d-meta { display: flex; flex-wrap: wrap; gap: 6px 14px; color: var(--muted); font-size: .85rem; align-items: center; }
+.badge { background: var(--accent-soft); color: var(--ink); border-radius: 4px; padding: 0 8px; font-size: .8rem; }
+.when { font-size: 1.02rem; margin: 0; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.btn { border-radius: 8px; padding: 9px 16px; border: 1px solid var(--accent); font-weight: 700; }
+.btn.primary { background: var(--accent); color: var(--accent-ink); }
+.btn.ghost { background: var(--surface); color: var(--accent); }
+.btn.small { padding: 4px 12px; font-size: .85rem; }
+.note { font-size: .85rem; color: var(--muted); }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.section { display: grid; gap: 10px; min-width: 0; }
+.section h3 { font-size: .95rem; }
+.problem { margin: 0; white-space: pre-wrap; }
+.io { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.io figure { margin: 0; display: grid; gap: 4px; min-width: 0; align-content: start; }
+.io figcaption { font-size: .8rem; color: var(--muted); }
+pre.code { margin: 0; background: var(--code-bg); color: var(--code-ink); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; font-size: .83rem; line-height: 1.6; overflow-x: auto; tab-size: 4; }
+pre.code .c { color: var(--code-comment); }
+.lib-fold { border-top: 1px dashed var(--line); padding-top: 10px; }
+.lib-fold summary { cursor: pointer; color: var(--accent); font-weight: 700; font-size: .9rem; }
+.lib-fold[open] summary { margin-bottom: 8px; }
+
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 20px); background: var(--ink); color: var(--bg); padding: 8px 16px; border-radius: 999px; font-size: .9rem; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 20; }
+.toast.show { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
+
+@media (max-width: 860px) {
+  .howto { grid-template-columns: minmax(0, 1fr); }
+  .browser { grid-template-columns: minmax(0, 1fr); }
+  .side { position: static; max-height: none; overflow: visible; }
+  .io { grid-template-columns: minmax(0, 1fr); }
+  .detail { padding: 16px; }
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <h1>cp-library 早見表</h1>
+    <p>問題に合うものを探して、コピーして、貼るだけ。</p>
+  </header>
+
+  <section class="howto" aria-labelledby="howto-h">
+    <div>
+      <h2 id="howto-h">使い方</h2>
+      <ol class="steps">
+        <li>下の一覧か検索で、問題に合うものを選ぶ。「いつ使う？」と例題を見て決める。</li>
+        <li><b>「例ごとコピー」</b>を押してエディタに貼る。そのまま動くプログラムなので、<b>main の中だけ</b>問題に合わせて書き換える。</li>
+        <li>もう自分のコードがあるときは<b>「ライブラリだけコピー」</b>を押して、黄色いところ（<code>using namespace std;</code> と <code>int main()</code> の間）に貼る。</li>
+        <li>入力が 1 始まりなら、読んだあとに <code>-1</code> して 0 始まりにする。どの例にも書き方が入っている。</li>
+      </ol>
+      <div class="rules" aria-label="共通のルール">
+        <span class="rule">番号は 0 始まり</span>
+        <span class="rule">区間 (l, r) は r を含まない</span>
+        <span class="rule">数の配列は vector&lt;long long&gt;</span>
+        <span class="rule">行けない・ないときは -1</span>
+        <span class="rule">2 つ以上使うときは続けて貼る</span>
+      </div>
+    </div>
+    <div class="skeleton-box">
+      <pre class="skeleton" aria-label="ライブラリを貼る場所">#include &lt;bits/stdc++.h&gt;
+using namespace std;
+<span class="paste">// ← ここにライブラリを貼る</span>int main() {
+    cin.tie(nullptr);
+    ios::sync_with_stdio(false);
+    // 自分のコード
+}</pre>
+      <div><button class="btn ghost small" id="copy-template" type="button">この形（空のテンプレ）をコピー</button></div>
+    </div>
+  </section>
+
+  <div class="browser">
+    <nav class="side" aria-label="ライブラリ一覧">
+      <input class="search" id="search" type="search" placeholder="検索（例: 迷路、区間の合計、998244353）" autocomplete="off">
+      <div class="chips" id="chips"></div>
+      <div id="list"></div>
+      <p class="empty" id="empty" hidden>見つからない。別の言葉で検索してみて。</p>
+    </nav>
+    <main class="detail" id="detail" aria-live="polite"></main>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script type="application/json" id="data">/*__DATA__*/</script>
+<script>
+(function () {
+  const DATA = JSON.parse(document.getElementById("data").textContent);
+  const items = DATA.items;
+  const order = DATA.categories.flatMap(c => c.ids);
+  const CHIPS = ["迷路", "最短距離", "区間の合計", "区間の最小値", "グループ", "998244353", "二分探索", "木", "文字列", "素数"];
+  let current = null;
+  let exIndex = 0;
+  let activeChip = null;
+
+  const el = (tag, cls, text) => {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
+  };
+
+  // コメント（// 以降）だけ色を変える
+  function renderCode(pre, src) {
+    pre.textContent = "";
+    for (const line of src.replace(/\n$/, "").split("\n")) {
+      const i = line.indexOf("//");
+      if (i >= 0) {
+        pre.append(line.slice(0, i));
+        pre.append(el("span", "c", line.slice(i)));
+      } else {
+        pre.append(line);
+      }
+      pre.append("\n");
+    }
+  }
+
+  // ---- コピー ----
+  const toast = document.getElementById("toast");
+  let toastTimer = null;
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("show"), 1800);
+  }
+  function fallbackCopy(text) {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.append(ta);
+    ta.select();
+    let ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+    ta.remove();
+    return ok;
+  }
+  function copyText(text, label) {
+    const done = () => showToast(label + "をコピーしました");
+    const fail = () => showToast(fallbackCopy(text) ? label + "をコピーしました" : "コピーできませんでした。コードを選択してコピーしてください");
+    try {
+      navigator.clipboard.writeText(text).then(done, fail);
+    } catch (e) {
+      fail();
+    }
+  }
+  const TEMPLATE = DATA.header + "// ← ここにライブラリを貼る\n\nint main() {\n    cin.tie(nullptr);\n    ios::sync_with_stdio(false);\n\n}\n";
+  document.getElementById("copy-template").addEventListener("click", () => copyText(TEMPLATE, "テンプレ"));
+
+  // ---- 一覧 ----
+  const list = document.getElementById("list");
+  const buttons = {};
+  for (const cat of DATA.categories) {
+    const box = el("div", "cat");
+    box.dataset.cat = cat.name;
+    box.append(el("h3", "", cat.name));
+    const ul = el("ul");
+    for (const id of cat.ids) {
+      const it = items[id];
+      const li = el("li");
+      const b = el("button", "item");
+      b.type = "button";
+      b.append(el("span", "t", it.title.replace(/（.*）$/, "")), el("span", "lv", "ABC " + it.level), el("span", "w", it.when));
+      b.addEventListener("click", () => { location.hash = id; select(id, true); });
+      li.append(b);
+      ul.append(li);
+      buttons[id] = b;
+    }
+    box.append(ul);
+    list.append(box);
+  }
+
+  // ---- 検索 ----
+  const search = document.getElementById("search");
+  const chipsBox = document.getElementById("chips");
+  for (const word of CHIPS) {
+    const c = el("button", "chip", word);
+    c.type = "button";
+    c.setAttribute("aria-pressed", "false");
+    c.addEventListener("click", () => {
+      activeChip = activeChip === word ? null : word;
+      search.value = activeChip || "";
+      for (const x of chipsBox.children) x.setAttribute("aria-pressed", String(x.textContent === activeChip));
+      filter();
+    });
+    chipsBox.append(c);
+  }
+  function haystack(it) {
+    return (it.title + " " + it.when + " " + it.keywords + " " + it.path + " " + it.examples.map(e => e.problem).join(" ")).toLowerCase();
+  }
+  function filter() {
+    const words = search.value.toLowerCase().split(/[\s　]+/).filter(Boolean);
+    let shown = 0;
+    for (const box of list.children) {
+      let any = false;
+      for (const li of box.querySelectorAll("li")) {
+        const id = Object.keys(buttons).find(k => buttons[k] === li.firstChild);
+        const hit = words.every(w => haystack(items[id]).includes(w));
+        li.hidden = !hit;
+        if (hit) { any = true; shown++; }
+      }
+      box.hidden = !any;
+    }
+    document.getElementById("empty").hidden = shown > 0;
+  }
+  search.addEventListener("input", () => {
+    if (activeChip && search.value !== activeChip) {
+      activeChip = null;
+      for (const x of chipsBox.children) x.setAttribute("aria-pressed", "false");
+    }
+    filter();
+  });
+
+  // ---- 詳細 ----
+  const detail = document.getElementById("detail");
+  function fullProgram(it, ex) {
+    return DATA.header + it.lib + "\n" + ex.source;
+  }
+  function libOnly(it) {
+    return it.lib;
+  }
+  function renderDetail() {
+    const it = items[current];
+    const ex = it.examples[exIndex];
+    detail.textContent = "";
+
+    const head = el("div", "d-head");
+    head.append(el("h2", "", it.title));
+    const meta = el("div", "d-meta");
+    meta.append(el("span", "badge", "出番の目安 ABC " + it.level), el("span", "mono", "lib/" + it.path));
+    head.append(meta);
+    detail.append(head, el("p", "when", it.when));
+
+    const actions = el("div", "actions");
+    const b1 = el("button", "btn primary", "例ごとコピー（そのまま動く）");
+    b1.type = "button";
+    b1.addEventListener("click", () => copyText(fullProgram(it, it.examples[exIndex]), "例のプログラム"));
+    const b2 = el("button", "btn ghost", "ライブラリだけコピー");
+    b2.type = "button";
+    b2.addEventListener("click", () => copyText(libOnly(it), "ライブラリ"));
+    actions.append(b1, b2);
+    if (it.deps.length) {
+      actions.append(el("span", "note", "※ " + it.deps.map(p => p.split("/")[1]).join("・") + " も一緒にコピーされます"));
+    }
+    detail.append(actions);
+
+    if (it.examples.length > 1) {
+      const tabs = el("div", "tabs");
+      it.examples.forEach((e, i) => {
+        const t = el("button", "chip", "例 " + (i + 1));
+        t.type = "button";
+        t.setAttribute("aria-pressed", String(i === exIndex));
+        t.addEventListener("click", () => { exIndex = i; renderDetail(); });
+        tabs.append(t);
+      });
+      detail.append(tabs);
+    }
+
+    const sec1 = el("section", "section");
+    sec1.append(el("h3", "", "例題"), el("p", "problem", ex.problem));
+    const io = el("div", "io");
+    for (const [cap, txt] of [["入力例", ex.input], ["出力例", ex.output]]) {
+      const f = el("figure");
+      const pre = el("pre", "code");
+      pre.textContent = txt.replace(/\n$/, "");
+      f.append(el("figcaption", "", cap), pre);
+      io.append(f);
+    }
+    sec1.append(io);
+    detail.append(sec1);
+
+    const sec2 = el("section", "section");
+    sec2.append(el("h3", "", "例の main（ここを問題に合わせて書き換える）"));
+    const pre = el("pre", "code");
+    // 例のファイルの先頭のコメント（例題・入出力）を飛ばした残りが main の部分
+    renderCode(pre, ex.source.replace(/^(\/\/.*\n)+\s*/, ""));
+    sec2.append(pre);
+    const fold = el("details", "lib-fold");
+    fold.append(el("summary", "", "上に入るライブラリ部分も見る"));
+    const libPre = el("pre", "code");
+    renderCode(libPre, it.lib);
+    fold.append(libPre);
+    sec2.append(fold);
+    detail.append(sec2);
+
+    const sec3 = el("section", "section");
+    sec3.append(el("h3", "", "このファイルでできること"));
+    const u = el("pre", "code");
+    u.textContent = it.usage;
+    sec3.append(u);
+    detail.append(sec3);
+  }
+  function select(id, scroll) {
+    if (!items[id]) return;
+    if (current !== id) exIndex = 0;
+    current = id;
+    for (const k in buttons) buttons[k].setAttribute("aria-current", String(k === id));
+    renderDetail();
+    if (scroll && window.matchMedia("(max-width: 860px)").matches) {
+      detail.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+    }
+  }
+  function fromHash() {
+    const id = location.hash.slice(1);
+    select(items[id] ? id : (current || "grid-bfs"), false);
+  }
+  window.addEventListener("hashchange", fromHash);
+  fromHash();
+})();
+</script>

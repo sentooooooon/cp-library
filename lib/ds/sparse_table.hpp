@@ -4,6 +4,7 @@
 //   SparseTable st(a);       // vector<long long> a
 //   st.query(l, r)           // a[l] 〜 a[r-1] の最小値（l < r）
 // 【書き換えるところ】★ を max にすれば最大値、gcd にすれば gcd。（足し算はダメ）
+// 【例】examples/ds/sparse_table.cpp に、そのまま動くプログラムがある。
 
 struct SparseTable {
     // ★

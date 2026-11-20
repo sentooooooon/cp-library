@@ -9,6 +9,7 @@
 //   dist[i][j]                                       // (i, j) までの最短手数。行けないなら -1
 //   ※ 問題文のマスが 1 始まりなら si--, sj-- してから渡す。
 // 【書き換えるところ】★ 斜めにも動けるなら 8 方向に、壁の文字が '#' でないならそこを書き換える。
+// 【例】examples/graph/grid_bfs.cpp に、そのまま動くプログラムがある。
 
 vector<vector<int>> grid_bfs(const vector<string>& s, int si, int sj) {
     // ★ 動ける方向（下・右・上・左）

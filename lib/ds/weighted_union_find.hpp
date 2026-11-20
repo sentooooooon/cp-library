@@ -8,6 +8,7 @@
 //   uf.diff(a, b)              // (b の値) - (a の値)。same(a, b) が true のときだけ使える
 //   uf.size(a)                 // a がいるグループの人数
 //   uf.count()                 // グループの数
+// 【例】examples/ds/weighted_union_find.cpp に、そのまま動くプログラムがある。
 
 struct WeightedUnionFind {
     vector<int> parent, sz;

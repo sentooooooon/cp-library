@@ -7,6 +7,7 @@
 //   g[b].push_back(a);                  // 無向グラフなら逆向きも入れる
 //   vector<int> dist = bfs(g, s);
 //   dist[v]                             // s から v への最短距離。行けないなら -1
+// 【例】examples/graph/bfs.cpp に、そのまま動くプログラムがある。
 
 vector<int> bfs(const vector<vector<int>>& g, int s) {
     int n = g.size();

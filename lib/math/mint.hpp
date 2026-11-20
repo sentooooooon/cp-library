@@ -9,6 +9,7 @@
 //   cout << c << "\n";      // そのまま出力できる
 //   cout << c.x << "\n";    // 中身（0 〜 MOD-1）は .x
 // 【注意】1000000007 の問題なら下の MOD を書き換える。
+// 【例】examples/math/mint.cpp に、そのまま動くプログラムがある。
 
 const long long MOD = 998244353;
 

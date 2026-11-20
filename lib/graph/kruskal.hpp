@@ -5,6 +5,7 @@
 //   vector<tuple<int, int, long long>> edges;    // {a, b, 長さ}
 //   edges.push_back({a, b, c});                  // a と b をつなぐ長さ c の辺
 //   long long cost = kruskal(n, edges);          // 合計の最小値。全部はつなげないなら -1
+// 【例】examples/graph/kruskal.cpp に、そのまま動くプログラムがある。
 
 long long kruskal(int n, vector<tuple<int, int, long long>> edges) {
     // 短い辺から順に見て、まだつながっていない2頂点をつなぐ辺だけ使う

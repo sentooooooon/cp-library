@@ -5,6 +5,7 @@
 //   vector<vector<int>> groups = scc(g);
 //   groups[i]                    // i 番目のグループの頂点たち
 //   ※ グループはトポロジカル順（前のグループから後ろのグループへしか辺がない）
+// 【例】examples/graph/scc.cpp に、そのまま動くプログラムがある。
 
 void scc_dfs1(int u, const vector<vector<int>>& g, vector<bool>& used, vector<int>& order) {
     used[u] = true;

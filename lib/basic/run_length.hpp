@@ -7,6 +7,7 @@
 //       // c = 文字、cnt = 何個続いたか
 //   }
 //   run_length(a)                        // vector<long long> a でも使える
+// 【例】examples/basic/run_length.cpp に、そのまま動くプログラムがある。
 
 vector<pair<char, int>> run_length(const string& s) {
     vector<pair<char, int>> res;

@@ -10,6 +10,7 @@
 //   seg.get_max(l, r)            // a[l] 〜 a[r-1] の最大値
 //   seg.get_sum(l, r)            // a[l] 〜 a[r-1] の合計
 //   seg.get(i)                   // a[i]
+// 【例】examples/ds/lazy_segtree.cpp に、そのまま動くプログラムがある。
 
 struct LazySegTree {
     int n;

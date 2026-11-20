@@ -9,6 +9,7 @@
 //   sv.is_prime[x]        // x が素数か
 //   sv.primes             // 1000000 以下の素数のリスト
 //   sv.factorize(x)       // x を素因数分解（とても速い）
+// 【例】examples/math/prime.cpp に、そのまま動くプログラムがある。
 
 bool is_prime(long long n) {
     if(n < 2) return false;

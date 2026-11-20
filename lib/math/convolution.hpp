@@ -5,6 +5,7 @@
 // 【使い方】
 //   vector<mint> a = {1, 2, 3}, b = {4, 5};
 //   vector<mint> c = convolution(a, b);   // {4, 13, 22, 15}
+// 【例】examples/math/convolution.cpp に、そのまま動くプログラムがある。
 
 void ntt(vector<mint>& a, bool inverse) {
     int n = a.size();

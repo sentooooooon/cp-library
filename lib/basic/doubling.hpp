@@ -6,6 +6,7 @@
 //   vector<int> nxt(n);         // nxt[i] = i の次に行く場所（0 〜 n-1）
 //   Doubling db(nxt);
 //   db.jump(x, k)               // x から k 回進んだ場所
+// 【例】examples/basic/doubling.cpp に、そのまま動くプログラムがある。
 
 struct Doubling {
     static const int LOG = 61;  // 2^61 > 2 × 10^18

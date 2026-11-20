@@ -3,6 +3,7 @@
 //              パターン検索: z_algorithm(t + "$" + s) で z[i] == t.size() の場所が一致位置。
 // 【使い方】
 //   vector<int> z = z_algorithm("aabaa");   // {5, 1, 0, 2, 1}
+// 【例】examples/string/z_algorithm.cpp に、そのまま動くプログラムがある。
 
 vector<int> z_algorithm(const string& s) {
     int n = s.size();

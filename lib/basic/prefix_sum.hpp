@@ -7,6 +7,7 @@
 //   PrefixSum2D ps2(g);               // vector<vector<long long>> g（H 行 W 列）
 //   ps2.sum(i1, j1, i2, j2)           // 行 i1 〜 i2-1、列 j1 〜 j2-1 の長方形の合計
 //                                     // （i2 行目と j2 列目は含まない）
+// 【例】examples/basic/prefix_sum.cpp と examples/basic/prefix_sum_2d.cpp に、そのまま動くプログラムがある。
 
 struct PrefixSum {
     vector<long long> s;  // s[i] = a[0] + ... + a[i-1]

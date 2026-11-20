@@ -5,6 +5,7 @@
 //   lis(a)              // a[i1] < a[i2] < ...（同じ数はダメ）の最長の長さ。vector<long long> a
 //   lis(a, false)       // a[i1] <= a[i2] <= ...（同じ数もOK）の最長の長さ
 //   ※ だんだん小さくなる列がほしいときは、全部に -1 を掛けてから lis する。
+// 【例】examples/basic/lis.cpp に、そのまま動くプログラムがある。
 
 int lis(const vector<long long>& a, bool strict = true) {
     vector<long long> dp;  // dp[k] = 長さ k+1 の列の「最後の数」としてありえる一番小さい数

@@ -6,6 +6,7 @@
 //   if(color.empty()) → 塗れない（二部グラフではない）
 //   color[v]                            // 頂点 v の色（0 か 1）
 //   ※ つながっていない部分ごとに、番号が一番小さい頂点を 0 にして塗る
+// 【例】examples/graph/bipartite.cpp に、そのまま動くプログラムがある。
 
 vector<int> bipartite(const vector<vector<int>>& g) {
     int n = g.size();

@@ -7,6 +7,7 @@
 //   mint b = comb.P(5, 2);     // 5P2 = 20
 //   mint c = comb.H(3, 2);     // 3H2 = 6（重複組合せ）
 //   mint d = comb.fact[10];    // 10!
+// 【例】examples/math/comb.cpp に、そのまま動くプログラムがある。
 
 struct Comb {
     vector<mint> fact, ifact;

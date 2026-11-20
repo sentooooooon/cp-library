@@ -11,6 +11,7 @@
 //   最大値: e() = -INF (LLONG_MIN),  op = max(a, b)
 //   合計  : e() = 0,                 op = a + b
 //   gcd   : e() = 0,                 op = gcd(a, b)
+// 【例】examples/ds/segtree.cpp に、そのまま動くプログラムがある。
 
 struct SegTree {
     // ★ 何もない区間の値

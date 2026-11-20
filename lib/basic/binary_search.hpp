@@ -18,6 +18,7 @@
 //   lower_bound(a.begin(), a.end(), x) - a.begin()   // x 以上が最初に出てくる位置
 //   upper_bound(a.begin(), a.end(), x) - a.begin()   // x より大きいのが最初に出てくる位置
 //   （x 未満の個数 = lower_bound の位置、x 以下の個数 = upper_bound の位置）
+// 【例】examples/basic/binary_search.cpp に、そのまま動くプログラムがある。
 
 long long bin_search(long long ok, long long ng, function<bool(long long)> f) {
     while(abs(ok - ng) > 1)

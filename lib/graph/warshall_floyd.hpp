@@ -6,6 +6,7 @@
 //   vector<vector<long long>> d = warshall_floyd(g);
 //   d[u][v]                                      // u から v への最短距離。行けないなら -1
 // 【注意】辺の長さが 0 以上のとき用。
+// 【例】examples/graph/warshall_floyd.cpp に、そのまま動くプログラムがある。
 
 vector<vector<long long>> warshall_floyd(const vector<vector<pair<int, long long>>>& g) {
     int n = g.size();

@@ -7,6 +7,7 @@
 //   lca.dist(a, b)               // a と b の距離（辺の本数）
 //   lca.depth[v]                 // 根からの深さ
 //   lca.ancestor(v, k)           // v から k 個上の頂点（なければ -1）
+// 【例】examples/graph/lca.cpp に、そのまま動くプログラムがある。
 
 struct LCA {
     int LOG;

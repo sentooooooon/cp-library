@@ -8,6 +8,7 @@
 //   ext_gcd(a, b, x, y)       // ax + by = gcd(a, b) となる x, y を求め、gcd を返す
 //   crt(r1, m1, r2, m2)       // x ≡ r1 (mod m1) かつ x ≡ r2 (mod m2) となる x を返す
 //                             // 戻り値 {x, lcm(m1, m2)}。解がなければ {-1, -1}
+// 【例】examples/math/number_theory.cpp に、そのまま動くプログラムがある。
 
 long long pow_mod(long long a, long long n, long long m) {
     long long res = 1 % m;

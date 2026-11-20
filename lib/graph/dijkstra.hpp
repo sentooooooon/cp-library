@@ -5,6 +5,7 @@
 //   g[u].push_back({v, c});                      // u → v に長さ c の辺（無向なら逆向きも追加）
 //   vector<long long> dist = dijkstra(g, s);
 //   dist[v]                                      // s から v への最短距離。行けないなら -1
+// 【例】examples/graph/dijkstra.cpp に、そのまま動くプログラムがある。
 
 vector<long long> dijkstra(const vector<vector<pair<int, long long>>>& g, int s) {
     int n = g.size();

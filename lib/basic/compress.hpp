@@ -9,6 +9,7 @@
 //   cp.val(2)                // 100（番号 2 の元の数）
 //   cp.size()                // 3（何種類あるか）
 //   ※ 2つ以上の配列をまとめて圧縮したいときは、1つの vector にまとめてから渡す。
+// 【例】examples/basic/compress.cpp に、そのまま動くプログラムがある。
 
 struct Compress {
     vector<long long> vals;  // 小さい順・重複なし

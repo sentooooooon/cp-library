@@ -4,6 +4,7 @@
 //   from_base("1010", 2)    // 10（2 進数の文字列を数に）
 //   ※ 2 〜 36 進数まで。10 以上の桁は 'A', 'B', ...（from_base は小文字でもOK）
 //   ※ to_base に渡す数は 0 以上。
+// 【例】examples/math/base_conv.cpp に、そのまま動くプログラムがある。
 
 string to_base(long long n, int b) {
     if(n == 0) return "0";

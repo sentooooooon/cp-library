@@ -6,6 +6,7 @@
 //   Imos im(n);                       // a[0] 〜 a[n-1]、最初は全部 0
 //   im.add(l, r, x);                  // a[l] 〜 a[r-1] に x を足す（r は含まない）
 //   vector<long long> a = im.build(); // 全部足し終わったあとの配列
+// 【例】examples/basic/imos.cpp に、そのまま動くプログラムがある。
 
 struct Imos {
     vector<long long> d;  // d[i] = a[i] - a[i-1]
