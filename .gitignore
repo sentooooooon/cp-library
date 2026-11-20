@@ -1,3 +1,4 @@
 tests/test_all
 *.out
 a.out
+__pycache__/
